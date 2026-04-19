@@ -8,6 +8,6 @@ public record PerkDefinition(
         String description,
         Tier unlockTier,
         Material icon,
-        boolean comingSoon
+        boolean customEffect
 ) {
 }
