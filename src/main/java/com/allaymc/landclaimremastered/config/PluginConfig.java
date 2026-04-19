@@ -22,27 +22,23 @@ public final class PluginConfig {
     }
 
     public String databaseType() {
-        return raw().getString(ConfigKeys.DATABASE_TYPE, "SQLITE").toUpperCase(Locale.ROOT);
+        return raw().getString("database.type", "SQLITE").toUpperCase(Locale.ROOT);
     }
 
     public String sqliteFile() {
-        return raw().getString(ConfigKeys.DATABASE_SQLITE_FILE, "claims.db");
-    }
-
-    public String claimsProvider() {
-        return raw().getString(ConfigKeys.CLAIMS_PROVIDER, "GRIEFPREVENTION");
+        return raw().getString("database.sqlite-file", "claims.db");
     }
 
     public int perkSwitchCooldownSeconds() {
-        return raw().getInt(ConfigKeys.PERKS_SWITCH_COOLDOWN_SECONDS, 30);
+        return raw().getInt("perks.switch-cooldown-seconds", 30);
     }
 
     public int perkApplyRefreshTicks() {
-        return raw().getInt(ConfigKeys.PERKS_APPLY_REFRESH_TICKS, 40);
+        return raw().getInt("perks.apply-refresh-ticks", 40);
     }
 
     public ClaimTrustMode defaultTrustMode() {
-        String value = raw().getString(ConfigKeys.PERKS_TRUSTED_DEFAULT_MODE, "ALL_TRUSTED");
+        String value = raw().getString("perks.trusted-default-mode", "ALL_TRUSTED");
         try {
             return ClaimTrustMode.valueOf(value.toUpperCase(Locale.ROOT));
         } catch (IllegalArgumentException ex) {
@@ -50,16 +46,12 @@ public final class PluginConfig {
         }
     }
 
-    public boolean scoreboardEnabled() {
-        return raw().getBoolean(ConfigKeys.UI_SCOREBOARD_ENABLED, true);
-    }
-
     public boolean actionbarEnterMessageEnabled() {
-        return raw().getBoolean(ConfigKeys.UI_ACTIONBAR_ENTER_MESSAGE, true);
+        return raw().getBoolean("ui.actionbar-enter-message", true);
     }
 
     public boolean showComingSoonTiers() {
-        return raw().getBoolean(ConfigKeys.UI_SHOW_COMING_SOON_TIERS, true);
+        return raw().getBoolean("ui.show-coming-soon-tiers", true);
     }
 
     public Map<Tier, Integer> tierThresholds() {
