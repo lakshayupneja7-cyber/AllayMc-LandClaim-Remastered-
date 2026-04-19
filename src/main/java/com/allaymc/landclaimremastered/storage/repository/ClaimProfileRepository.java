@@ -20,33 +20,25 @@ public final class ClaimProfileRepository {
     }
 
     public Optional<ClaimProfile> findById(String claimId) {
-        String sql = "SELECT claim_id, owner_uuid, display_name, selected_perk, trust_mode FROM claim_profile WHERE claim_id = ?";
-
-        try (PreparedStatement statement = databaseManager.connection().prepareStatement(sql)) {
-            statement.setString(1, claimId);
-
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (!resultSet.next()) {
-                    return Optional.empty();
-                }
-
+        try (PreparedStatement ps = databaseManager.connection().prepareStatement(
+                "SELECT claim_id, owner_uuid, display_name, selected_perk, trust_mode FROM claim_profile WHERE claim_id = ?")) {
+            ps.setString(1, claimId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (!rs.next()) return Optional.empty();
                 ClaimProfile profile = new ClaimProfile(
-                        resultSet.getString("claim_id"),
-                        UUID.fromString(resultSet.getString("owner_uuid"))
+                        rs.getString("claim_id"),
+                        UUID.fromString(rs.getString("owner_uuid")),
+                        rs.getString("display_name"),
+                        ClaimTrustMode.valueOf(rs.getString("trust_mode"))
                 );
-
-                profile.setName(resultSet.getString("display_name"));
-
-                String perk = resultSet.getString("selected_perk");
+                String perk = rs.getString("selected_perk");
                 if (perk != null && !perk.isBlank()) {
                     profile.setSelectedPerk(PerkKey.valueOf(perk));
                 }
-
-                profile.setTrustMode(ClaimTrustMode.valueOf(resultSet.getString("trust_mode")));
                 return Optional.of(profile);
             }
-        } catch (SQLException exception) {
-            throw new RuntimeException("Failed to load claim profile", exception);
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to load claim profile", e);
         }
     }
 
@@ -55,21 +47,20 @@ public final class ClaimProfileRepository {
             INSERT INTO claim_profile (claim_id, owner_uuid, display_name, selected_perk, trust_mode)
             VALUES (?, ?, ?, ?, ?)
             ON CONFLICT(claim_id) DO UPDATE SET
-                owner_uuid = excluded.owner_uuid,
-                display_name = excluded.display_name,
-                selected_perk = excluded.selected_perk,
-                trust_mode = excluded.trust_mode
+              owner_uuid = excluded.owner_uuid,
+              display_name = excluded.display_name,
+              selected_perk = excluded.selected_perk,
+              trust_mode = excluded.trust_mode
         """;
-
-        try (PreparedStatement statement = databaseManager.connection().prepareStatement(sql)) {
-            statement.setString(1, profile.getClaimId());
-            statement.setString(2, profile.getOwnerUuid().toString());
-            statement.setString(3, profile.getName());
-            statement.setString(4, profile.getSelectedPerk() == null ? null : profile.getSelectedPerk().name());
-            statement.setString(5, profile.getTrustMode().name());
-            statement.executeUpdate();
-        } catch (SQLException exception) {
-            throw new RuntimeException("Failed to save claim profile", exception);
+        try (PreparedStatement ps = databaseManager.connection().prepareStatement(sql)) {
+            ps.setString(1, profile.getClaimId());
+            ps.setString(2, profile.getOwnerUuid().toString());
+            ps.setString(3, profile.getName());
+            ps.setString(4, profile.getSelectedPerk() == null ? null : profile.getSelectedPerk().name());
+            ps.setString(5, profile.getTrustMode().name());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to save claim profile", e);
         }
     }
 }

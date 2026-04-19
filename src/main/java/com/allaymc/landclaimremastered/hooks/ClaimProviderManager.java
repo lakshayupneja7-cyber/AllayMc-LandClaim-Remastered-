@@ -1,7 +1,7 @@
-package com.allaymc.landclaimremastered.hook;
+package com.allaymc.landclaimremastered.hooks;
 
 import com.allaymc.landclaimremastered.AllayClaimsPlugin;
-import com.allaymc.landclaimremastered.hook.gp.GriefPreventionProvider;
+import com.allaymc.landclaimremastered.hooks.griefprevention.GriefPreventionProvider;
 
 public final class ClaimProviderManager {
 

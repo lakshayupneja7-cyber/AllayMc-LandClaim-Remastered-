@@ -1,10 +1,7 @@
 package com.allaymc.landclaimremastered.commands;
 
 import com.allaymc.landclaimremastered.AllayClaimsPlugin;
-import com.allaymc.landclaimremastered.bootstrap.PluginBootstrap;
 import com.allaymc.landclaimremastered.model.ClaimContext;
-import com.allaymc.landclaimremastered.model.ClaimProfile;
-import com.allaymc.landclaimremastered.model.Tier;
 import com.allaymc.landclaimremastered.util.Chat;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -24,31 +21,15 @@ public final class ClaimCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player player)) {
-            sender.sendMessage(Chat.message(plugin, CommandMessages.PLAYERS_ONLY));
+            sender.sendMessage(Chat.message(plugin.getBootstrap().getMessageConfig(), "players-only", "<red>Players only."));
             return true;
         }
-
-        PluginBootstrap bootstrap = plugin.getBootstrap();
-        Optional<ClaimContext> claimOptional = bootstrap.getPerkService().currentClaim(player);
-
-        if (claimOptional.isEmpty()) {
-            player.sendMessage(Chat.message(plugin, CommandMessages.NO_CLAIM_HERE));
+        Optional<ClaimContext> context = plugin.getBootstrap().getPerkService().currentClaim(player);
+        if (context.isEmpty()) {
+            player.sendMessage(Chat.message(plugin.getBootstrap().getMessageConfig(), "no-claim-here", "<red>No claim here."));
             return true;
         }
-
-        ClaimContext context = claimOptional.get();
-        ClaimProfile profile = bootstrap.getClaimProfileService().getOrCreate(context.claimId(), context.owner());
-        Tier tier = bootstrap.getPlayerProgressService().currentTier(player);
-        int total = bootstrap.getPlayerProgressService().totalClaimBlocks(player);
-
-        player.sendMessage(Chat.colorize("&8&m------------------------------"));
-        player.sendMessage(Chat.colorize("&b&lAllayClaims &7- &fCurrent Claim"));
-        player.sendMessage(Chat.colorize("&7Claim ID: &f" + context.claimId()));
-        player.sendMessage(Chat.colorize("&7Claim Name: &f" + profile.getName()));
-        player.sendMessage(Chat.colorize("&7Tier: &f" + tier.name()));
-        player.sendMessage(Chat.colorize("&7Total Claim Blocks: &f" + total));
-        player.sendMessage(Chat.colorize("&7Selected Perk: &f" + (profile.getSelectedPerk() == null ? "None" : profile.getSelectedPerk().name())));
-        player.sendMessage(Chat.colorize("&8&m------------------------------"));
+        plugin.getBootstrap().getGuiManager().openMainMenu(player, context.get());
         return true;
     }
 }

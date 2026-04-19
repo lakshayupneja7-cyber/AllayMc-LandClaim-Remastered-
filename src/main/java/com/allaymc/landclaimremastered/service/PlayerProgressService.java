@@ -1,37 +1,25 @@
 package com.allaymc.landclaimremastered.service;
 
-import com.allaymc.landclaimremastered.AllayClaimsPlugin;
-import com.allaymc.landclaimremastered.hook.ClaimProviderManager;
+import com.allaymc.landclaimremastered.hooks.ClaimProviderManager;
 import com.allaymc.landclaimremastered.model.Tier;
 import com.allaymc.landclaimremastered.storage.repository.PlayerProgressRepository;
 import org.bukkit.entity.Player;
 
-import java.util.UUID;
-
 public final class PlayerProgressService {
 
-    private final AllayClaimsPlugin plugin;
-    private final ClaimProviderManager claimProviderManager;
+    private final ClaimProviderManager providerManager;
     private final TierService tierService;
     private final PlayerProgressRepository repository;
 
-    public PlayerProgressService(
-            AllayClaimsPlugin plugin,
-            ClaimProviderManager claimProviderManager,
-            TierService tierService,
-            PlayerProgressRepository repository
-    ) {
-        this.plugin = plugin;
-        this.claimProviderManager = claimProviderManager;
+    public PlayerProgressService(ClaimProviderManager providerManager, TierService tierService, PlayerProgressRepository repository) {
+        this.providerManager = providerManager;
         this.tierService = tierService;
         this.repository = repository;
     }
 
     public int totalClaimBlocks(Player player) {
-        if (!claimProviderManager.isAvailable()) {
-            return 0;
-        }
-        return claimProviderManager.getActiveProvider().getTotalClaimBlocks(player);
+        if (!providerManager.isAvailable()) return 0;
+        return Math.max(0, providerManager.getActiveProvider().getTotalClaimBlocks(player));
     }
 
     public Tier currentTier(Player player) {
@@ -39,7 +27,6 @@ public final class PlayerProgressService {
     }
 
     public void sync(Player player) {
-        UUID uuid = player.getUniqueId();
-        repository.upsert(uuid, totalClaimBlocks(player), currentTier(player).getLevel());
+        repository.upsert(player.getUniqueId(), totalClaimBlocks(player), currentTier(player).getLevel());
     }
 }

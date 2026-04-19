@@ -17,12 +17,12 @@ public final class PluginConfig {
         this.plugin = plugin;
     }
 
-    public FileConfiguration raw() {
-        return plugin.getConfig();
+    public void reload() {
+        plugin.reloadConfig();
     }
 
-    public String databaseType() {
-        return raw().getString("database.type", "SQLITE").toUpperCase(Locale.ROOT);
+    private FileConfiguration raw() {
+        return plugin.getConfig();
     }
 
     public String sqliteFile() {
@@ -33,25 +33,28 @@ public final class PluginConfig {
         return raw().getInt("perks.switch-cooldown-seconds", 30);
     }
 
-    public int perkApplyRefreshTicks() {
-        return raw().getInt("perks.apply-refresh-ticks", 40);
+    public long perkApplyRefreshTicks() {
+        return raw().getLong("perks.apply-refresh-ticks", 40L);
     }
 
     public ClaimTrustMode defaultTrustMode() {
-        String value = raw().getString("perks.trusted-default-mode", "ALL_TRUSTED");
         try {
-            return ClaimTrustMode.valueOf(value.toUpperCase(Locale.ROOT));
+            return ClaimTrustMode.valueOf(raw().getString("perks.trusted-default-mode", "ALL_TRUSTED").toUpperCase(Locale.ROOT));
         } catch (IllegalArgumentException ex) {
             return ClaimTrustMode.ALL_TRUSTED;
         }
     }
 
-    public boolean actionbarEnterMessageEnabled() {
+    public boolean actionBarEnterMessageEnabled() {
         return raw().getBoolean("ui.actionbar-enter-message", true);
     }
 
     public boolean showComingSoonTiers() {
         return raw().getBoolean("ui.show-coming-soon-tiers", true);
+    }
+
+    public String defaultClaimName() {
+        return raw().getString("settings.default-claim-name", "Unnamed Claim");
     }
 
     public Map<Tier, Integer> tierThresholds() {

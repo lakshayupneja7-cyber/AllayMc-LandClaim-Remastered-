@@ -13,48 +13,21 @@ public final class ClaimProfile {
     private ClaimTrustMode trustMode;
     private final Set<UUID> perkWhitelist;
 
-    public ClaimProfile(String claimId, UUID ownerUuid) {
+    public ClaimProfile(String claimId, UUID ownerUuid, String defaultName, ClaimTrustMode defaultTrustMode) {
         this.claimId = claimId;
         this.ownerUuid = ownerUuid;
-        this.name = "Unnamed Claim";
-        this.selectedPerk = null;
-        this.trustMode = ClaimTrustMode.ALL_TRUSTED;
+        this.name = defaultName;
+        this.trustMode = defaultTrustMode;
         this.perkWhitelist = new HashSet<>();
     }
 
-    public String getClaimId() {
-        return claimId;
-    }
-
-    public UUID getOwnerUuid() {
-        return ownerUuid;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public PerkKey getSelectedPerk() {
-        return selectedPerk;
-    }
-
-    public ClaimTrustMode getTrustMode() {
-        return trustMode;
-    }
-
-    public Set<UUID> getPerkWhitelist() {
-        return perkWhitelist;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setSelectedPerk(PerkKey selectedPerk) {
-        this.selectedPerk = selectedPerk;
-    }
-
-    public void setTrustMode(ClaimTrustMode trustMode) {
-        this.trustMode = trustMode;
-    }
+    public String getClaimId() { return claimId; }
+    public UUID getOwnerUuid() { return ownerUuid; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public PerkKey getSelectedPerk() { return selectedPerk; }
+    public void setSelectedPerk(PerkKey selectedPerk) { this.selectedPerk = selectedPerk; }
+    public ClaimTrustMode getTrustMode() { return trustMode; }
+    public void setTrustMode(ClaimTrustMode trustMode) { this.trustMode = trustMode; }
+    public Set<UUID> getPerkWhitelist() { return perkWhitelist; }
 }

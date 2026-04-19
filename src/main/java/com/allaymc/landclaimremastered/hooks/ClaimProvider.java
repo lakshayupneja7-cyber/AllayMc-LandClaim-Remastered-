@@ -1,4 +1,4 @@
-package com.allaymc.landclaimremastered.hook;
+package com.allaymc.landclaimremastered.hooks;
 
 import com.allaymc.landclaimremastered.model.ClaimContext;
 import org.bukkit.Location;

@@ -11,10 +11,12 @@ perks:
   trusted-default-mode: ALL_TRUSTED
 
 ui:
-  scoreboard:
-    enabled: true
   actionbar-enter-message: true
   show-coming-soon-tiers: true
+  titles-on-unlock: true
+
+settings:
+  default-claim-name: Unnamed Claim
 
 tiers:
   1: 200

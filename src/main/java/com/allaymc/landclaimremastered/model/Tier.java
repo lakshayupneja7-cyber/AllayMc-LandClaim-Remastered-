@@ -20,20 +20,6 @@ public enum Tier {
         this.requiredBlocks = requiredBlocks;
     }
 
-    public int getLevel() {
-        return level;
-    }
-
-    public int getRequiredBlocks() {
-        return requiredBlocks;
-    }
-
-    public static Tier fromLevel(int level) {
-        for (Tier tier : values()) {
-            if (tier.level == level) {
-                return tier;
-            }
-        }
-        throw new IllegalArgumentException("Unknown tier level: " + level);
-    }
+    public int getLevel() { return level; }
+    public int getRequiredBlocks() { return requiredBlocks; }
 }

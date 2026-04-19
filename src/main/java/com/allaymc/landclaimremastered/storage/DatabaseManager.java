@@ -22,25 +22,18 @@ public final class DatabaseManager {
 
     public void start() {
         try {
-            if ("SQLITE".equalsIgnoreCase(config.databaseType())) {
-                File file = new File(plugin.getDataFolder(), config.sqliteFile());
-                if (!plugin.getDataFolder().exists()) {
-                    plugin.getDataFolder().mkdirs();
-                }
-                this.connection = DriverManager.getConnection("jdbc:sqlite:" + file.getAbsolutePath());
-            } else {
-                throw new IllegalStateException("Only SQLITE is wired in this initial development step.");
-            }
-
+            if (!plugin.getDataFolder().exists()) plugin.getDataFolder().mkdirs();
+            File file = new File(plugin.getDataFolder(), config.sqliteFile());
+            connection = DriverManager.getConnection("jdbc:sqlite:" + file.getAbsolutePath());
             createTables();
-        } catch (SQLException exception) {
-            throw new RuntimeException("Failed to start database", exception);
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to start database", e);
         }
     }
 
     private void createTables() throws SQLException {
-        try (Statement statement = connection.createStatement()) {
-            statement.executeUpdate("""
+        try (Statement st = connection.createStatement()) {
+            st.executeUpdate("""
                 CREATE TABLE IF NOT EXISTS player_progress (
                     player_uuid TEXT PRIMARY KEY,
                     total_claim_blocks INTEGER NOT NULL,
@@ -49,7 +42,7 @@ public final class DatabaseManager {
                 )
             """);
 
-            statement.executeUpdate("""
+            st.executeUpdate("""
                 CREATE TABLE IF NOT EXISTS claim_profile (
                     claim_id TEXT PRIMARY KEY,
                     owner_uuid TEXT NOT NULL,
@@ -61,17 +54,11 @@ public final class DatabaseManager {
         }
     }
 
-    public Connection connection() {
-        return connection;
-    }
+    public Connection connection() { return connection; }
 
     public void shutdown() {
-        if (connection == null) {
-            return;
-        }
         try {
-            connection.close();
-        } catch (SQLException ignored) {
-        }
+            if (connection != null) connection.close();
+        } catch (SQLException ignored) {}
     }
 }
