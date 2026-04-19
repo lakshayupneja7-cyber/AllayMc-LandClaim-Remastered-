@@ -1,7 +1,7 @@
-package com.allaymc.landclaimremastered.hooks.griefprevention;
+package com.allaymc.landclaimremastered.hook.gp;
 
 import com.allaymc.landclaimremastered.AllayClaimsPlugin;
-import com.allaymc.landclaimremastered.hooks.ClaimProvider;
+import com.allaymc.landclaimremastered.hook.ClaimProvider;
 import com.allaymc.landclaimremastered.model.ClaimContext;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -28,14 +28,11 @@ public final class GriefPreventionProvider implements ClaimProvider {
 
     @Override
     public Optional<ClaimContext> getClaimAt(Location location) {
-        // Temporary safe implementation.
-        // Real GriefPrevention hook should be added once dependency access is set up properly.
         return Optional.empty();
     }
 
     @Override
     public int getTotalClaimBlocks(Player player) {
-        // Temporary safe implementation.
         return 0;
     }
 }
