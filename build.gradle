@@ -31,3 +31,8 @@ processResources {
         expand(version: project.version)
     }
 }
+
+jar {
+    archiveBaseName.set("AllayMc-LandClaim-Remastered")
+    archiveVersion.set(project.version.toString())
+}
