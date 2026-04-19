@@ -10,11 +10,11 @@ softdepend:
 
 commands:
   claim:
-    description: Open the claim menu for your current claim
+    description: Open the claim menu
     usage: /claim
     permission: allayclaim.use
   claimadmin:
-    description: Administrative tools for AllayMc claims
+    description: Open the admin menu
     usage: /claimadmin
     permission: allayclaim.admin
 
