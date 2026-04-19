@@ -8,15 +8,10 @@ version = '1.0.0'
 repositories {
     mavenCentral()
     maven { url = 'https://repo.papermc.io/repository/maven-public/' }
-    maven { url = 'https://jitpack.io' }
 }
 
 dependencies {
     compileOnly 'io.papermc.paper:paper-api:1.21.1-R0.1-SNAPSHOT'
-
-    // GriefPrevention is usually server-side provided, so compileOnly local dependency style is common.
-    // Replace version/source if you use a published repository or local jar.
-    compileOnly files('libs/GriefPrevention.jar')
 }
 
 java {
