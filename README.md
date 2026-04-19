@@ -1,27 +1,21 @@
 # AllayMc Land Claim Remastered
 
-A progression-driven claims enhancement plugin for Paper servers using GriefPrevention.
+A progression-driven Paper plugin that adds a claim perk tree on top of GriefPrevention-style land claims.
 
-## Features
+## Main Design
 
-- Claim tier system based on total player claim blocks
-- Per-claim active perk selection
-- 15 launch perks across Tier I to Tier V
-- Tier VI to Tier X marked as Coming Soon
-- GriefPrevention integration
-- SQLite by default, MySQL-ready architecture
-- GUI-first design
-- Placeholder/TAB-ready structure
+- Tier unlocks are based on the player's total claim blocks
+- Active perk is selected per claim
+- One perk active per claim at a time
+- Tier I-V perks are implemented
+- Tier VI-X show as Coming Soon
 
-## Current design
+## Commands
 
-- Tier unlocks come from the player's total claim blocks
-- Perks are selected per claim area
-- Only one perk can be active per claim at a time
-- Perks only apply inside the selected claim
-- Trusted members can benefit based on claim settings
+- `/claim`
+- `/claimadmin`
 
 ## Build
 
 ```bash
-./gradlew build
+gradle build
