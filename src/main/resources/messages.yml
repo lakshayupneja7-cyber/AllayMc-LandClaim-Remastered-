@@ -1,0 +1,8 @@
+prefix: "<#6bd6ff><bold>AllayClaims</bold></#6bd6ff> <gray>»</gray> "
+
+no-claim-here: "<red>You are not standing inside one of your claims."
+claim-provider-missing: "<red>GriefPrevention was not found. The plugin cannot work without a claims provider."
+reloaded: "<green>Configuration reloaded."
+perk-set: "<green>Active perk set to <white>%perk%</white> for this claim."
+no-permission: "<red>You do not have permission."
+players-only: "<red>Only players can use this command."
