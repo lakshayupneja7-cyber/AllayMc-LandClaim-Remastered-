@@ -1,7 +1,7 @@
-package com.allaymc.landclaimremastered.hooks;
+package com.allaymc.landclaimremastered.hook;
 
 import com.allaymc.landclaimremastered.AllayClaimsPlugin;
-import com.allaymc.landclaimremastered.hooks.griefprevention.GriefPreventionProvider;
+import com.allaymc.landclaimremastered.hook.gp.GriefPreventionProvider;
 
 public final class ClaimProviderManager {
 
@@ -25,9 +25,5 @@ public final class ClaimProviderManager {
 
     public ClaimProvider getActiveProvider() {
         return activeProvider;
-    }
-
-    public String getProviderName() {
-        return activeProvider == null ? "NONE" : activeProvider.getName();
     }
 }
