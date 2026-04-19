@@ -1,7 +1,7 @@
 package com.allaymc.landclaimremastered.service;
 
 import com.allaymc.landclaimremastered.AllayClaimsPlugin;
-import com.allaymc.landclaimremastered.hooks.ClaimProviderManager;
+import com.allaymc.landclaimremastered.hook.ClaimProviderManager;
 import com.allaymc.landclaimremastered.model.Tier;
 import com.allaymc.landclaimremastered.storage.repository.PlayerProgressRepository;
 import org.bukkit.entity.Player;
@@ -40,8 +40,6 @@ public final class PlayerProgressService {
 
     public void sync(Player player) {
         UUID uuid = player.getUniqueId();
-        int total = totalClaimBlocks(player);
-        Tier tier = currentTier(player);
-        repository.upsert(uuid, total, tier.getLevel());
+        repository.upsert(uuid, totalClaimBlocks(player), currentTier(player).getLevel());
     }
 }
