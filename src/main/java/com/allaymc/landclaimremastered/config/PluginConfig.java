@@ -11,12 +11,24 @@ public final class PluginConfig {
         this.plugin = plugin;
     }
 
+    public void reload() {
+        plugin.reloadConfig();
+    }
+
+    public String sqliteFile() {
+        return plugin.getConfig().getString("database.sqlite-file", "claims.db");
+    }
+
     public int perkRefreshTicks() {
         return plugin.getConfig().getInt("perks.refresh-ticks", 40);
     }
 
     public int switchCooldownSeconds() {
         return plugin.getConfig().getInt("perks.switch-cooldown-seconds", 30);
+    }
+
+    public boolean actionBarEnterMessageEnabled() {
+        return plugin.getConfig().getBoolean("ui.actionbar-enter-message", true);
     }
 
     public int requiredBlocks(Tier tier) {
