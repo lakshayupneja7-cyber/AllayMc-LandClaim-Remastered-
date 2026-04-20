@@ -6,19 +6,17 @@ import java.util.UUID;
 
 public record ClaimContext(
         String claimId,
-        UUID ownerUuid,
+        UUID owner,
         Set<UUID> trusted,
         int areaBlocks,
         String worldName
 ) {
     public ClaimContext {
-        trusted = trusted == null
-                ? Collections.emptySet()
-                : Set.copyOf(trusted);
+        trusted = trusted == null ? Collections.emptySet() : Set.copyOf(trusted);
     }
 
     public boolean isOwner(UUID uuid) {
-        return ownerUuid != null && ownerUuid.equals(uuid);
+        return owner != null && owner.equals(uuid);
     }
 
     public boolean isTrusted(UUID uuid) {
