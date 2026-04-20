@@ -1,4 +1,4 @@
-package com.allaymc.landclaimremastered.hooks;
+package com.allaymc.landclaimremastered.model;
 
 import java.util.Collections;
 import java.util.Set;
@@ -12,11 +12,13 @@ public record ClaimContext(
         String worldName
 ) {
     public ClaimContext {
-        trusted = trusted == null ? Collections.emptySet() : Set.copyOf(trusted);
+        trusted = trusted == null
+                ? Collections.emptySet()
+                : Set.copyOf(trusted);
     }
 
     public boolean isOwner(UUID uuid) {
-        return ownerUuid.equals(uuid);
+        return ownerUuid != null && ownerUuid.equals(uuid);
     }
 
     public boolean isTrusted(UUID uuid) {
