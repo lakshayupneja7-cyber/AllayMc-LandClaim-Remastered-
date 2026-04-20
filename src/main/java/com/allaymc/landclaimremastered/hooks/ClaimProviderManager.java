@@ -6,24 +6,28 @@ import com.allaymc.landclaimremastered.hooks.griefprevention.GriefPreventionProv
 public final class ClaimProviderManager {
 
     private final AllayClaimsPlugin plugin;
-    private ClaimProvider activeProvider;
+    private ClaimProvider provider;
 
     public ClaimProviderManager(AllayClaimsPlugin plugin) {
         this.plugin = plugin;
     }
 
     public void load() {
-        ClaimProvider provider = new GriefPreventionProvider(plugin);
-        if (provider.isAvailable()) {
-            this.activeProvider = provider;
+        ClaimProvider gp = new GriefPreventionProvider(plugin);
+        if (gp.isAvailable()) {
+            this.provider = gp;
         }
     }
 
     public boolean isAvailable() {
-        return activeProvider != null && activeProvider.isAvailable();
+        return provider != null && provider.isAvailable();
     }
 
-    public ClaimProvider getActiveProvider() {
-        return activeProvider;
+    public ClaimProvider getProvider() {
+        return provider;
+    }
+
+    public String getProviderName() {
+        return provider == null ? "NONE" : provider.getName();
     }
 }
