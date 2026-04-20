@@ -9,9 +9,10 @@ public final class Chat {
 
     private static final MiniMessage MINI = MiniMessage.miniMessage();
 
-    private Chat() {}
+    private Chat() {
+    }
 
-    public static String colorize(String text) {
+    public static String color(String text) {
         return ChatColor.translateAlternateColorCodes('&', text);
     }
 
@@ -19,8 +20,9 @@ public final class Chat {
         return MINI.deserialize(text);
     }
 
-    public static Component message(MessageConfig messages, String key, String fallback) {
-        String prefix = messages.get("prefix", "");
-        return MINI.deserialize(prefix + messages.get(key, fallback));
+    public static String message(MessageConfig config, String key, String def) {
+        String prefix = config.get("prefix", "");
+        String body = config.get(key, def);
+        return color(prefix + body);
     }
 }
