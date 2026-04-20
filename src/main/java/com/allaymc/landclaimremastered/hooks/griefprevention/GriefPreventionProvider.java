@@ -1,8 +1,8 @@
 package com.allaymc.landclaimremastered.hooks.griefprevention;
 
 import com.allaymc.landclaimremastered.AllayClaimsPlugin;
-import com.allaymc.landclaimremastered.hooks.ClaimContext;
 import com.allaymc.landclaimremastered.hooks.ClaimProvider;
+import com.allaymc.landclaimremastered.model.ClaimContext;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -114,7 +114,6 @@ public final class GriefPreventionProvider implements ClaimProvider {
     }
 
     private Object findClaimAt(Object dataStore, Location location) throws Exception {
-        // Try any getClaimAt overload dynamically
         for (Method method : dataStore.getClass().getMethods()) {
             if (!method.getName().equals("getClaimAt")) continue;
 
@@ -131,11 +130,9 @@ public final class GriefPreventionProvider implements ClaimProvider {
                     return method.invoke(dataStore, location);
                 }
             } catch (IllegalArgumentException ignored) {
-                // try next overload
             }
         }
 
-        // Fallback: scan all claims manually if GP overloads are weird
         Method getClaims = findMethod(dataStore.getClass(), "getClaims", 0);
         if (getClaims != null) {
             Object result = getClaims.invoke(dataStore);
