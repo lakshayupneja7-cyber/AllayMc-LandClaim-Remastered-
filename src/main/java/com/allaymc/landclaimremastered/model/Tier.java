@@ -13,13 +13,27 @@ public enum Tier {
     X(10, 40000);
 
     private final int level;
-    private final int requiredBlocks;
+    private final int defaultBlocks;
 
-    Tier(int level, int requiredBlocks) {
+    Tier(int level, int defaultBlocks) {
         this.level = level;
-        this.requiredBlocks = requiredBlocks;
+        this.defaultBlocks = defaultBlocks;
     }
 
-    public int getLevel() { return level; }
-    public int getRequiredBlocks() { return requiredBlocks; }
+    public int level() {
+        return level;
+    }
+
+    public int defaultBlocks() {
+        return defaultBlocks;
+    }
+
+    public static Tier byLevel(int level) {
+        for (Tier tier : values()) {
+            if (tier.level == level) {
+                return tier;
+            }
+        }
+        return I;
+    }
 }
