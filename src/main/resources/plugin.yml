@@ -1,13 +1,12 @@
 name: AllayMcLandClaimRemastered
 main: com.allaymc.landclaimremastered.AllayClaimsPlugin
-version: 1.2.0
-api-version: "1.21"
+version: ${version}
+api-version: '1.21'
 softdepend:
   - GriefPrevention
   - PlaceholderAPI
   - TAB
   - LuckPerms
-
 commands:
   allayclaim:
     description: Open the AllayMc claim menu
@@ -18,11 +17,8 @@ commands:
     description: Admin controls
     usage: /claimadmin
     permission: allayclaim.admin
-
 permissions:
   allayclaim.use:
     default: true
   allayclaim.admin:
-    default: op
-  allayclaim.reload:
     default: op

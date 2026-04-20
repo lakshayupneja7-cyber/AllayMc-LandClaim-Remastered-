@@ -7,6 +7,7 @@ public record PerkDefinition(
         String displayName,
         String description,
         Tier unlockTier,
-        Material icon
+        Material icon,
+        boolean customHandled
 ) {
 }

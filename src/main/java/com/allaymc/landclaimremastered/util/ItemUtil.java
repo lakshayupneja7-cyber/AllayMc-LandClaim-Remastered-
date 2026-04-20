@@ -15,7 +15,6 @@ public final class ItemUtil {
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
         if (meta == null) return item;
-
         meta.setDisplayName(Chat.color(name));
         meta.setLore(lore.stream().map(Chat::color).toList());
         item.setItemMeta(meta);

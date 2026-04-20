@@ -20,19 +20,17 @@ public enum Tier {
         this.defaultBlocks = defaultBlocks;
     }
 
-    public int level() {
+    public int getLevel() {
         return level;
     }
 
-    public int defaultBlocks() {
+    public int getDefaultBlocks() {
         return defaultBlocks;
     }
 
     public static Tier byLevel(int level) {
         for (Tier tier : values()) {
-            if (tier.level == level) {
-                return tier;
-            }
+            if (tier.level == level) return tier;
         }
         return I;
     }

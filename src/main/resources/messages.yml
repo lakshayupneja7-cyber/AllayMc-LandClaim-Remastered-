@@ -1,10 +1,10 @@
-prefix: "<#6bd6ff><bold>AllayClaims</bold></#6bd6ff> <gray>»</gray> "
-players-only: "<red>Only players can use this command."
-no-permission: "<red>You do not have permission."
-no-claim-here: "<red>You are not standing inside one of your claims."
-provider-missing: "<red>GriefPrevention was not found or could not be read."
-owner-only: "<red>Only the claim owner can do that."
-perk-locked: "<red>That perk is still locked."
-perk-set: "<green>Perk set to <white>%perk%</white><green> for this claim."
-reloaded: "<green>Configuration reloaded."
-inside-claim: "<gray>Claim perk active: <white>%perk%</white>"
+prefix: '&b&lAllayClaims &7» '
+players-only: '&cOnly players can use this command.'
+no-permission: '&cYou do not have permission.'
+no-claim-here: '&cYou are not standing inside one of your claims.'
+provider-missing: '&cGriefPrevention was not found or could not be read.'
+owner-only: '&cOnly the claim owner can do that.'
+perk-locked: '&cThat perk is still locked.'
+perk-set: '&aPerk set to &f%perk%&a for this claim.'
+reloaded: '&aConfiguration reloaded.'
+inside-claim: '&7Claim perk active: &f%perk%'

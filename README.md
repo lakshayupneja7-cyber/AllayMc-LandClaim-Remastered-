@@ -1,21 +1,27 @@
-# AllayMc Land Claim Remastered
+# AllayMc Land Claim Remastered 1.2.0
 
-A progression-driven Paper plugin that adds a claim perk tree on top of GriefPrevention-style land claims.
+Paper plugin for AllayMc built on top of GriefPrevention.
 
-## Main Design
-
-- Tier unlocks are based on the player's total claim blocks
-- Active perk is selected per claim
-- One perk active per claim at a time
-- Tier I-V perks are implemented
-- Tier VI-X show as Coming Soon
+## Highlights
+- `/allayclaim` command to avoid `/claim` conflicts
+- Tier progression from total GriefPrevention claim blocks
+- Per-claim active perk selection
+- Red locked tiers in GUI
+- Spaced perk tree layout
+- Perks menu shows locked and unlocked perks
+- Claim whitelist commands
 
 ## Commands
-
-- `/claim`
-- `/claimadmin`
+- `/allayclaim`
+- `/allayclaim whitelist list`
+- `/allayclaim whitelist add <player>`
+- `/allayclaim whitelist remove <player>`
+- `/claimadmin reload`
 
 ## Build
-
 ```bash
 gradle build
+```
+
+## Output
+`build/libs/AllayMc-LandClaim-Remastered-1.2.0.jar`

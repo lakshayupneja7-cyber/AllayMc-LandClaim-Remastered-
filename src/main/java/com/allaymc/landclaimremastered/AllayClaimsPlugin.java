@@ -8,11 +8,15 @@ public final class AllayClaimsPlugin extends JavaPlugin {
     private static AllayClaimsPlugin instance;
     private PluginBootstrap bootstrap;
 
+    public static AllayClaimsPlugin get() {
+        return instance;
+    }
+
     @Override
     public void onEnable() {
         instance = this;
         saveDefaultConfig();
-        saveResource("messages.yml", false);
+        saveResourceIfMissing("messages.yml");
 
         this.bootstrap = new PluginBootstrap(this);
         this.bootstrap.enable();
@@ -25,8 +29,10 @@ public final class AllayClaimsPlugin extends JavaPlugin {
         }
     }
 
-    public static AllayClaimsPlugin getInstance() {
-        return instance;
+    private void saveResourceIfMissing(String path) {
+        if (!new java.io.File(getDataFolder(), path).exists()) {
+            saveResource(path, false);
+        }
     }
 
     public PluginBootstrap getBootstrap() {

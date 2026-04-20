@@ -11,17 +11,14 @@ public final class ClaimProfile {
     private String displayName;
     private PerkKey selectedPerk;
     private ClaimTrustMode trustMode;
-    private final Set<UUID> perkWhitelist = new HashSet<>();
+    private final Set<UUID> perkWhitelist;
 
     public ClaimProfile(String claimId, UUID ownerUuid, String displayName, ClaimTrustMode trustMode) {
         this.claimId = claimId;
         this.ownerUuid = ownerUuid;
         this.displayName = displayName;
         this.trustMode = trustMode;
-    }
-
-    public ClaimProfile(String claimId, UUID ownerUuid) {
-        this(claimId, ownerUuid, "Claim #" + claimId, ClaimTrustMode.ALL_TRUSTED);
+        this.perkWhitelist = new HashSet<>();
     }
 
     public String getClaimId() {
@@ -36,27 +33,27 @@ public final class ClaimProfile {
         return displayName;
     }
 
-    public PerkKey getSelectedPerk() {
-        return selectedPerk;
-    }
-
-    public ClaimTrustMode getTrustMode() {
-        return trustMode;
-    }
-
-    public Set<UUID> getPerkWhitelist() {
-        return perkWhitelist;
-    }
-
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
+    }
+
+    public PerkKey getSelectedPerk() {
+        return selectedPerk;
     }
 
     public void setSelectedPerk(PerkKey selectedPerk) {
         this.selectedPerk = selectedPerk;
     }
 
+    public ClaimTrustMode getTrustMode() {
+        return trustMode;
+    }
+
     public void setTrustMode(ClaimTrustMode trustMode) {
         this.trustMode = trustMode;
+    }
+
+    public Set<UUID> getPerkWhitelist() {
+        return perkWhitelist;
     }
 }

@@ -3,6 +3,10 @@ package com.allaymc.landclaimremastered.config;
 import com.allaymc.landclaimremastered.AllayClaimsPlugin;
 import com.allaymc.landclaimremastered.model.Tier;
 
+import java.io.File;
+import java.util.EnumMap;
+import java.util.Map;
+
 public final class PluginConfig {
 
     private final AllayClaimsPlugin plugin;
@@ -32,6 +36,14 @@ public final class PluginConfig {
     }
 
     public int requiredBlocks(Tier tier) {
-        return plugin.getConfig().getInt("tiers." + tier.level(), tier.defaultBlocks());
+        return plugin.getConfig().getInt("tiers." + tier.getLevel(), tier.getDefaultBlocks());
+    }
+
+    public Map<Tier, Integer> tierThresholds() {
+        Map<Tier, Integer> map = new EnumMap<>(Tier.class);
+        for (Tier tier : Tier.values()) {
+            map.put(tier, requiredBlocks(tier));
+        }
+        return map;
     }
 }

@@ -12,17 +12,17 @@ public final class Chat {
     private Chat() {
     }
 
-    public static String color(String text) {
-        return ChatColor.translateAlternateColorCodes('&', text);
+    public static String color(String input) {
+        return ChatColor.translateAlternateColorCodes('&', input);
     }
 
-    public static Component mm(String text) {
-        return MINI.deserialize(text);
+    public static Component mm(String input) {
+        return MINI.deserialize(input);
     }
 
-    public static String message(MessageConfig config, String key, String def) {
+    public static Component message(MessageConfig config, String key, String fallback) {
         String prefix = config.get("prefix", "");
-        String body = config.get(key, def);
-        return color(prefix + body);
+        String body = config.get(key, fallback);
+        return mm(color(prefix) + color(body));
     }
 }

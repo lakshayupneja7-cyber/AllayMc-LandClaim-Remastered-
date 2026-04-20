@@ -21,40 +21,14 @@ public final class DatabaseManager {
 
     public void start() {
         try {
-            if (!plugin.getDataFolder().exists()) {
-                plugin.getDataFolder().mkdirs();
-            }
-
-            File file = new File(plugin.getDataFolder(), config.sqliteFile());
-            this.connection = DriverManager.getConnection("jdbc:sqlite:" + file.getAbsolutePath());
-
+            File folder = plugin.getDataFolder();
+            if (!folder.exists()) folder.mkdirs();
+            File file = new File(folder, config.sqliteFile());
+            connection = DriverManager.getConnection("jdbc:sqlite:" + file.getAbsolutePath());
             try (Statement statement = connection.createStatement()) {
-                statement.executeUpdate("""
-                    CREATE TABLE IF NOT EXISTS claim_profiles (
-                        claim_id TEXT PRIMARY KEY,
-                        owner_uuid TEXT NOT NULL,
-                        display_name TEXT NOT NULL,
-                        selected_perk TEXT NULL,
-                        trust_mode TEXT NOT NULL
-                    )
-                """);
-
-                statement.executeUpdate("""
-                    CREATE TABLE IF NOT EXISTS claim_whitelist (
-                        claim_id TEXT NOT NULL,
-                        player_uuid TEXT NOT NULL,
-                        PRIMARY KEY (claim_id, player_uuid)
-                    )
-                """);
-
-                statement.executeUpdate("""
-                    CREATE TABLE IF NOT EXISTS player_progress (
-                        player_uuid TEXT PRIMARY KEY,
-                        total_claim_blocks INTEGER NOT NULL,
-                        current_tier INTEGER NOT NULL,
-                        updated_at TEXT DEFAULT CURRENT_TIMESTAMP
-                    )
-                """);
+                statement.executeUpdate("CREATE TABLE IF NOT EXISTS claim_profiles (claim_id TEXT PRIMARY KEY, owner_uuid TEXT NOT NULL, display_name TEXT NOT NULL, selected_perk TEXT NULL, trust_mode TEXT NOT NULL)");
+                statement.executeUpdate("CREATE TABLE IF NOT EXISTS claim_whitelist (claim_id TEXT NOT NULL, player_uuid TEXT NOT NULL, PRIMARY KEY (claim_id, player_uuid))");
+                statement.executeUpdate("CREATE TABLE IF NOT EXISTS player_progress (player_uuid TEXT PRIMARY KEY, total_claim_blocks INTEGER NOT NULL, current_tier INTEGER NOT NULL, updated_at TEXT DEFAULT CURRENT_TIMESTAMP)");
             }
         } catch (Exception exception) {
             throw new RuntimeException("Failed to initialize database", exception);
@@ -67,9 +41,7 @@ public final class DatabaseManager {
 
     public void shutdown() {
         try {
-            if (connection != null && !connection.isClosed()) {
-                connection.close();
-            }
+            if (connection != null && !connection.isClosed()) connection.close();
         } catch (Exception ignored) {
         }
     }

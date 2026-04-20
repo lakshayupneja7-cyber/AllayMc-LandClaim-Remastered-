@@ -21,13 +21,11 @@ public final class ClaimProfileService {
     }
 
     public ClaimProfile getOrCreate(String claimId, UUID ownerUuid) {
-        return cache.computeIfAbsent(claimId, id ->
-                repository.find(id).orElseGet(() -> {
-                    ClaimProfile created = new ClaimProfile(id, ownerUuid);
-                    repository.save(created);
-                    return created;
-                })
-        );
+        return cache.computeIfAbsent(claimId, id -> repository.find(id).orElseGet(() -> {
+            ClaimProfile created = new ClaimProfile(id, ownerUuid, "Claim #" + id, ClaimTrustMode.ALL_TRUSTED);
+            repository.save(created);
+            return created;
+        }));
     }
 
     public void setSelectedPerk(String claimId, UUID ownerUuid, PerkKey perkKey) {

@@ -39,49 +39,28 @@ public final class GriefPreventionProvider implements ClaimProvider {
         try {
             Object gpInstance = getGpInstance();
             if (gpInstance == null) return Optional.empty();
-
             Object dataStore = getFieldValue(gpInstance, "dataStore");
             if (dataStore == null) return Optional.empty();
-
             Object claim = findClaimAt(dataStore, location);
             if (claim == null) return Optional.empty();
-
             Object parent = getFieldValue(claim, "parent");
             if (parent != null) return Optional.empty();
-
             Object ownerRaw = getFieldValue(claim, "ownerID");
             if (!(ownerRaw instanceof UUID ownerUuid)) return Optional.empty();
-
             String claimId = String.valueOf(invokeNoArgs(claim, "getID"));
-
             Set<UUID> trusted = new HashSet<>();
             collectTrust(claim, "getManagers", trusted);
             collectTrust(claim, "getBuilders", trusted);
             collectTrust(claim, "getContainers", trusted);
             collectTrust(claim, "getAccessors", trusted);
-
             Object lesser = invokeNoArgs(claim, "getLesserBoundaryCorner");
             Object greater = invokeNoArgs(claim, "getGreaterBoundaryCorner");
-            if (lesser == null || greater == null) return Optional.empty();
-
             int lesserX = (int) invokeNoArgs(lesser, "getBlockX");
             int lesserZ = (int) invokeNoArgs(lesser, "getBlockZ");
             int greaterX = (int) invokeNoArgs(greater, "getBlockX");
             int greaterZ = (int) invokeNoArgs(greater, "getBlockZ");
-
-            int width = Math.abs(greaterX - lesserX) + 1;
-            int depth = Math.abs(greaterZ - lesserZ) + 1;
-            int area = width * depth;
-
-            String worldName = location.getWorld() == null ? "unknown" : location.getWorld().getName();
-
-            return Optional.of(new ClaimContext(
-                    claimId,
-                    ownerUuid,
-                    trusted,
-                    area,
-                    worldName
-            ));
+            int area = (Math.abs(greaterX - lesserX) + 1) * (Math.abs(greaterZ - lesserZ) + 1);
+            return Optional.of(new ClaimContext(claimId, ownerUuid, trusted, area, location.getWorld() == null ? "unknown" : location.getWorld().getName()));
         } catch (Throwable throwable) {
             warnOnce("Failed to read GriefPrevention claim data: " + throwable.getClass().getSimpleName() + ": " + throwable.getMessage());
             return Optional.empty();
@@ -93,27 +72,17 @@ public final class GriefPreventionProvider implements ClaimProvider {
         try {
             Object gpInstance = getGpInstance();
             if (gpInstance == null) return 0;
-
             Object dataStore = getFieldValue(gpInstance, "dataStore");
             if (dataStore == null) return 0;
-
             Method getPlayerData = findMethod(dataStore.getClass(), "getPlayerData", 1);
             if (getPlayerData == null) return 0;
-
             Object playerData = getPlayerData.invoke(dataStore, player.getUniqueId());
             if (playerData == null) return 0;
-
             int remaining = readIntMethod(playerData, "getRemainingClaimBlocks");
             int accrued = readIntField(playerData, "accruedClaimBlocks");
             int bonus = readIntField(playerData, "bonusClaimBlocks");
-
-            // GP admin-granted blocks are often reflected in remaining, while accrued/bonus can vary by version.
-            int candidate = Math.max(remaining, accrued + bonus);
-
-            // Add already-used claim area owned by the player so "total claim strength" stays meaningful.
             int usedArea = sumOwnedClaimArea(dataStore, player.getUniqueId());
-
-            return Math.max(candidate, remaining + usedArea);
+            return Math.max(Math.max(remaining, accrued + bonus), remaining + usedArea);
         } catch (Throwable throwable) {
             warnOnce("Failed to read GriefPrevention player data: " + throwable.getClass().getSimpleName() + ": " + throwable.getMessage());
             return 0;
@@ -123,9 +92,7 @@ public final class GriefPreventionProvider implements ClaimProvider {
     private Object findClaimAt(Object dataStore, Location location) throws Exception {
         for (Method method : dataStore.getClass().getMethods()) {
             if (!method.getName().equals("getClaimAt")) continue;
-
             Class<?>[] params = method.getParameterTypes();
-
             try {
                 if (params.length == 3 && Location.class.isAssignableFrom(params[0]) && params[1] == boolean.class) {
                     return method.invoke(dataStore, location, false, null);
@@ -139,20 +106,15 @@ public final class GriefPreventionProvider implements ClaimProvider {
             } catch (IllegalArgumentException ignored) {
             }
         }
-
         Method getClaims = findMethod(dataStore.getClass(), "getClaims", 0);
         if (getClaims != null) {
             Object result = getClaims.invoke(dataStore);
             if (result instanceof Collection<?> claims) {
                 for (Object claim : claims) {
-                    if (claim == null) continue;
-                    if (contains(claim, location)) {
-                        return claim;
-                    }
+                    if (claim != null && contains(claim, location)) return claim;
                 }
             }
         }
-
         return null;
     }
 
@@ -160,34 +122,23 @@ public final class GriefPreventionProvider implements ClaimProvider {
         try {
             Method getClaims = findMethod(dataStore.getClass(), "getClaims", 0);
             if (getClaims == null) return 0;
-
             Object result = getClaims.invoke(dataStore);
             if (!(result instanceof Collection<?> claims)) return 0;
-
             int total = 0;
             for (Object claim : claims) {
                 if (claim == null) continue;
-
                 Object parent = getFieldValue(claim, "parent");
                 if (parent != null) continue;
-
                 Object ownerRaw = getFieldValue(claim, "ownerID");
                 if (!(ownerRaw instanceof UUID claimOwner) || !claimOwner.equals(ownerUuid)) continue;
-
                 Object lesser = invokeNoArgs(claim, "getLesserBoundaryCorner");
                 Object greater = invokeNoArgs(claim, "getGreaterBoundaryCorner");
-                if (lesser == null || greater == null) continue;
-
                 int lesserX = (int) invokeNoArgs(lesser, "getBlockX");
                 int lesserZ = (int) invokeNoArgs(lesser, "getBlockZ");
                 int greaterX = (int) invokeNoArgs(greater, "getBlockX");
                 int greaterZ = (int) invokeNoArgs(greater, "getBlockZ");
-
-                int width = Math.abs(greaterX - lesserX) + 1;
-                int depth = Math.abs(greaterZ - lesserZ) + 1;
-                total += width * depth;
+                total += (Math.abs(greaterX - lesserX) + 1) * (Math.abs(greaterZ - lesserZ) + 1);
             }
-
             return total;
         } catch (Throwable ignored) {
             return 0;
@@ -199,33 +150,21 @@ public final class GriefPreventionProvider implements ClaimProvider {
             Method contains = findMethod(claim.getClass(), "contains", 2);
             if (contains != null) {
                 Object result = contains.invoke(claim, location, false);
-                if (result instanceof Boolean bool) {
-                    return bool;
-                }
+                if (result instanceof Boolean bool) return bool;
             }
         } catch (Throwable ignored) {
         }
-
         try {
             Object lesser = invokeNoArgs(claim, "getLesserBoundaryCorner");
             Object greater = invokeNoArgs(claim, "getGreaterBoundaryCorner");
-            if (lesser == null || greater == null || location.getWorld() == null) return false;
-
-            Object lesserWorld = invokeNoArgs(lesser, "getWorld");
-            Object greaterWorld = invokeNoArgs(greater, "getWorld");
-            if (lesserWorld == null || greaterWorld == null) return false;
-            if (!location.getWorld().equals(lesserWorld) || !location.getWorld().equals(greaterWorld)) return false;
-
+            if (location.getWorld() == null) return false;
             int lx = (int) invokeNoArgs(lesser, "getBlockX");
             int lz = (int) invokeNoArgs(lesser, "getBlockZ");
             int gx = (int) invokeNoArgs(greater, "getBlockX");
             int gz = (int) invokeNoArgs(greater, "getBlockZ");
-
             int x = location.getBlockX();
             int z = location.getBlockZ();
-
-            return x >= Math.min(lx, gx) && x <= Math.max(lx, gx)
-                    && z >= Math.min(lz, gz) && z <= Math.max(lz, gz);
+            return x >= Math.min(lx, gx) && x <= Math.max(lx, gx) && z >= Math.min(lz, gz) && z <= Math.max(lz, gz);
         } catch (Throwable ignored) {
             return false;
         }
@@ -242,12 +181,9 @@ public final class GriefPreventionProvider implements ClaimProvider {
         try {
             Object result = invokeNoArgs(claim, methodName);
             if (!(result instanceof Collection<?> collection)) return;
-
             for (Object entry : collection) {
-                if (entry == null) continue;
                 String name = String.valueOf(entry);
                 if (name.isBlank()) continue;
-
                 OfflinePlayer offline = plugin.getServer().getOfflinePlayer(name);
                 UUID uuid = offline.getUniqueId();
                 if (uuid != null) out.add(uuid);
@@ -287,8 +223,7 @@ public final class GriefPreventionProvider implements ClaimProvider {
             Method method = target.getClass().getMethod(methodName);
             method.setAccessible(true);
             Object result = method.invoke(target);
-            if (result instanceof Integer i) return i;
-            return 0;
+            return result instanceof Integer i ? i : 0;
         } catch (Throwable ignored) {
             return 0;
         }

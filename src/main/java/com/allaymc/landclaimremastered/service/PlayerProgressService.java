@@ -11,27 +11,21 @@ public final class PlayerProgressService {
     private final TierService tierService;
     private final PlayerProgressRepository repository;
 
-    public PlayerProgressService(
-            ClaimProviderManager claimProviderManager,
-            TierService tierService,
-            PlayerProgressRepository repository
-    ) {
+    public PlayerProgressService(ClaimProviderManager claimProviderManager, TierService tierService, PlayerProgressRepository repository) {
         this.claimProviderManager = claimProviderManager;
         this.tierService = tierService;
         this.repository = repository;
     }
 
     public int totalClaimBlocks(Player player) {
-        if (!claimProviderManager.isAvailable()) {
-            return 0;
-        }
+        if (!claimProviderManager.isAvailable()) return 0;
         return Math.max(0, claimProviderManager.getProvider().getTotalClaimBlocks(player));
     }
 
     public Tier currentTier(Player player) {
         int total = totalClaimBlocks(player);
         Tier tier = tierService.resolveTier(total);
-        repository.save(player.getUniqueId(), total, tier.level());
+        repository.save(player.getUniqueId(), total, tier.getLevel());
         return tier;
     }
 
