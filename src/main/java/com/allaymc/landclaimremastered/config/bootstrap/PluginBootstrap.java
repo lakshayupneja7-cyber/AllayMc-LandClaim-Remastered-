@@ -43,23 +43,36 @@ public final class PluginBootstrap {
     public void enable() {
         this.pluginConfig = new PluginConfig(plugin);
         this.messageConfig = new MessageConfig(plugin, "messages.yml");
-
-        this.databaseManager = new DatabaseManager(plugin);
+        this.databaseManager = new DatabaseManager(plugin, pluginConfig);
         this.databaseManager.start();
 
         ClaimRepository claimRepository = new ClaimRepository(databaseManager);
-        PlayerProgressRepository playerProgressRepository = new PlayerProgressRepository(databaseManager);
+        PlayerProgressRepository progressRepository = new PlayerProgressRepository(databaseManager);
 
         this.claimProviderManager = new ClaimProviderManager(plugin);
         this.claimProviderManager.load();
 
         this.tierService = new TierService(pluginConfig);
-        this.playerProgressService = new PlayerProgressService(claimProviderManager, tierService, playerProgressRepository);
+        this.playerProgressService = new PlayerProgressService(claimProviderManager, tierService, progressRepository);
         this.claimProfileService = new ClaimProfileService(claimRepository);
         this.perkRegistry = new PerkRegistry();
         this.perkRegistry.registerDefaults();
-        this.perkService = new PerkService(plugin, claimProviderManager, claimProfileService, playerProgressService, perkRegistry, pluginConfig, messageConfig);
-        this.guiManager = new GuiManager(tierService, perkService, claimProfileService, playerProgressService, messageConfig);
+        this.perkService = new PerkService(
+                plugin,
+                claimProviderManager,
+                claimProfileService,
+                playerProgressService,
+                perkRegistry,
+                pluginConfig,
+                messageConfig
+        );
+        this.guiManager = new GuiManager(
+                tierService,
+                perkService,
+                claimProfileService,
+                playerProgressService,
+                messageConfig
+        );
 
         registerCommands();
         registerListeners();
@@ -70,7 +83,12 @@ public final class PluginBootstrap {
             plugin.getLogger().warning("No supported claim provider found.");
         }
 
-        Bukkit.getScheduler().runTaskTimer(plugin, () -> Bukkit.getOnlinePlayers().forEach(perkService::refreshPerk), 40L, pluginConfig.perkRefreshTicks());
+        Bukkit.getScheduler().runTaskTimer(
+                plugin,
+                () -> Bukkit.getOnlinePlayers().forEach(perkService::refreshPerk),
+                40L,
+                pluginConfig.perkRefreshTicks()
+        );
     }
 
     public void disable() {
