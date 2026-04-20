@@ -1,22 +1,14 @@
 database:
-  type: SQLITE
   sqlite-file: claims.db
 
-claims:
-  provider: GRIEFPREVENTION
-
 perks:
+  refresh-ticks: 40
   switch-cooldown-seconds: 30
-  apply-refresh-ticks: 40
-  trusted-default-mode: ALL_TRUSTED
+  default-trust-mode: ALL_TRUSTED
 
 ui:
-  actionbar-enter-message: true
   show-coming-soon-tiers: true
-  titles-on-unlock: true
-
-settings:
-  default-claim-name: Unnamed Claim
+  actionbar-enter-message: true
 
 tiers:
   1: 200
