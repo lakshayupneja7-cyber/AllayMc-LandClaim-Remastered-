@@ -1,6 +1,4 @@
-package com.allaymc.landclaimremastered.model;
-
-import org.bukkit.Location;
+package com.allaymc.landclaimremastered.hooks;
 
 import java.util.Collections;
 import java.util.Set;
@@ -8,18 +6,20 @@ import java.util.UUID;
 
 public record ClaimContext(
         String claimId,
-        UUID owner,
+        UUID ownerUuid,
         Set<UUID> trusted,
         int areaBlocks,
-        String worldName,
-        Location lesserCorner,
-        Location greaterCorner
+        String worldName
 ) {
     public ClaimContext {
         trusted = trusted == null ? Collections.emptySet() : Set.copyOf(trusted);
     }
 
+    public boolean isOwner(UUID uuid) {
+        return ownerUuid.equals(uuid);
+    }
+
     public boolean isTrusted(UUID uuid) {
-        return owner.equals(uuid) || trusted.contains(uuid);
+        return isOwner(uuid) || trusted.contains(uuid);
     }
 }
