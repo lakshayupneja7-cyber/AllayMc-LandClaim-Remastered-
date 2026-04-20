@@ -103,10 +103,17 @@ public final class GriefPreventionProvider implements ClaimProvider {
             Object playerData = getPlayerData.invoke(dataStore, player.getUniqueId());
             if (playerData == null) return 0;
 
+            int remaining = readIntMethod(playerData, "getRemainingClaimBlocks");
             int accrued = readIntField(playerData, "accruedClaimBlocks");
             int bonus = readIntField(playerData, "bonusClaimBlocks");
 
-            return Math.max(0, accrued + bonus);
+            // GP admin-granted blocks are often reflected in remaining, while accrued/bonus can vary by version.
+            int candidate = Math.max(remaining, accrued + bonus);
+
+            // Add already-used claim area owned by the player so "total claim strength" stays meaningful.
+            int usedArea = sumOwnedClaimArea(dataStore, player.getUniqueId());
+
+            return Math.max(candidate, remaining + usedArea);
         } catch (Throwable throwable) {
             warnOnce("Failed to read GriefPrevention player data: " + throwable.getClass().getSimpleName() + ": " + throwable.getMessage());
             return 0;
@@ -147,6 +154,44 @@ public final class GriefPreventionProvider implements ClaimProvider {
         }
 
         return null;
+    }
+
+    private int sumOwnedClaimArea(Object dataStore, UUID ownerUuid) {
+        try {
+            Method getClaims = findMethod(dataStore.getClass(), "getClaims", 0);
+            if (getClaims == null) return 0;
+
+            Object result = getClaims.invoke(dataStore);
+            if (!(result instanceof Collection<?> claims)) return 0;
+
+            int total = 0;
+            for (Object claim : claims) {
+                if (claim == null) continue;
+
+                Object parent = getFieldValue(claim, "parent");
+                if (parent != null) continue;
+
+                Object ownerRaw = getFieldValue(claim, "ownerID");
+                if (!(ownerRaw instanceof UUID claimOwner) || !claimOwner.equals(ownerUuid)) continue;
+
+                Object lesser = invokeNoArgs(claim, "getLesserBoundaryCorner");
+                Object greater = invokeNoArgs(claim, "getGreaterBoundaryCorner");
+                if (lesser == null || greater == null) continue;
+
+                int lesserX = (int) invokeNoArgs(lesser, "getBlockX");
+                int lesserZ = (int) invokeNoArgs(lesser, "getBlockZ");
+                int greaterX = (int) invokeNoArgs(greater, "getBlockX");
+                int greaterZ = (int) invokeNoArgs(greater, "getBlockZ");
+
+                int width = Math.abs(greaterX - lesserX) + 1;
+                int depth = Math.abs(greaterZ - lesserZ) + 1;
+                total += width * depth;
+            }
+
+            return total;
+        } catch (Throwable ignored) {
+            return 0;
+        }
     }
 
     private boolean contains(Object claim, Location location) {
@@ -232,6 +277,18 @@ public final class GriefPreventionProvider implements ClaimProvider {
             Field field = target.getClass().getDeclaredField(fieldName);
             field.setAccessible(true);
             return field.getInt(target);
+        } catch (Throwable ignored) {
+            return 0;
+        }
+    }
+
+    private int readIntMethod(Object target, String methodName) {
+        try {
+            Method method = target.getClass().getMethod(methodName);
+            method.setAccessible(true);
+            Object result = method.invoke(target);
+            if (result instanceof Integer i) return i;
+            return 0;
         } catch (Throwable ignored) {
             return 0;
         }
