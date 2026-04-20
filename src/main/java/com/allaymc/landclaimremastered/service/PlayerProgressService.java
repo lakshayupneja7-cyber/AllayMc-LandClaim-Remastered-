@@ -34,4 +34,8 @@ public final class PlayerProgressService {
         repository.save(player.getUniqueId(), total, tier.level());
         return tier;
     }
+
+    public void sync(Player player) {
+        currentTier(player);
+    }
 }
