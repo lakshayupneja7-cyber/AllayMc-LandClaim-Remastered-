@@ -2,31 +2,36 @@ package com.allaymc.landclaimremastered.service;
 
 import com.allaymc.landclaimremastered.hooks.ClaimProviderManager;
 import com.allaymc.landclaimremastered.model.Tier;
-import com.allaymc.landclaimremastered.storage.repository.PlayerProgressRepository;
+import com.allaymc.landclaimremastered.storage.PlayerProgressRepository;
 import org.bukkit.entity.Player;
 
 public final class PlayerProgressService {
 
-    private final ClaimProviderManager providerManager;
+    private final ClaimProviderManager claimProviderManager;
     private final TierService tierService;
     private final PlayerProgressRepository repository;
 
-    public PlayerProgressService(ClaimProviderManager providerManager, TierService tierService, PlayerProgressRepository repository) {
-        this.providerManager = providerManager;
+    public PlayerProgressService(
+            ClaimProviderManager claimProviderManager,
+            TierService tierService,
+            PlayerProgressRepository repository
+    ) {
+        this.claimProviderManager = claimProviderManager;
         this.tierService = tierService;
         this.repository = repository;
     }
 
     public int totalClaimBlocks(Player player) {
-        if (!providerManager.isAvailable()) return 0;
-        return Math.max(0, providerManager.getActiveProvider().getTotalClaimBlocks(player));
+        if (!claimProviderManager.isAvailable()) {
+            return 0;
+        }
+        return Math.max(0, claimProviderManager.getProvider().getTotalClaimBlocks(player));
     }
 
     public Tier currentTier(Player player) {
-        return tierService.resolveTier(totalClaimBlocks(player));
-    }
-
-    public void sync(Player player) {
-        repository.upsert(player.getUniqueId(), totalClaimBlocks(player), currentTier(player).getLevel());
+        int total = totalClaimBlocks(player);
+        Tier tier = tierService.resolveTier(total);
+        repository.save(player.getUniqueId(), total, tier.level());
+        return tier;
     }
 }
