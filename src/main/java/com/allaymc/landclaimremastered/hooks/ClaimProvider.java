@@ -7,8 +7,12 @@ import org.bukkit.entity.Player;
 import java.util.Optional;
 
 public interface ClaimProvider {
+
     String getName();
+
     boolean isAvailable();
+
     Optional<ClaimContext> getClaimAt(Location location);
+
     int getTotalClaimBlocks(Player player);
 }
