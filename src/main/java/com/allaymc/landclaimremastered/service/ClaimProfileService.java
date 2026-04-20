@@ -50,18 +50,14 @@ public final class ClaimProfileService {
     public boolean addWhitelistPlayer(String claimId, UUID ownerUuid, UUID target) {
         ClaimProfile profile = getOrCreate(claimId, ownerUuid);
         boolean added = profile.getPerkWhitelist().add(target);
-        if (added) {
-            repository.save(profile);
-        }
+        if (added) repository.save(profile);
         return added;
     }
 
     public boolean removeWhitelistPlayer(String claimId, UUID ownerUuid, UUID target) {
         ClaimProfile profile = getOrCreate(claimId, ownerUuid);
         boolean removed = profile.getPerkWhitelist().remove(target);
-        if (removed) {
-            repository.save(profile);
-        }
+        if (removed) repository.save(profile);
         return removed;
     }
 
