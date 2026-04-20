@@ -3,26 +3,25 @@ package com.allaymc.landclaimremastered.service;
 import com.allaymc.landclaimremastered.config.PluginConfig;
 import com.allaymc.landclaimremastered.model.Tier;
 
-import java.util.Comparator;
-import java.util.Map;
-
 public final class TierService {
 
-    private final Map<Tier, Integer> thresholds;
+    private final PluginConfig config;
 
     public TierService(PluginConfig config) {
-        this.thresholds = config.tierThresholds();
+        this.config = config;
+    }
+
+    public int requiredBlocks(Tier tier) {
+        return config.requiredBlocks(tier);
     }
 
     public Tier resolveTier(int totalClaimBlocks) {
-        return thresholds.entrySet().stream()
-                .filter(entry -> totalClaimBlocks >= entry.getValue())
-                .map(Map.Entry::getKey)
-                .max(Comparator.comparingInt(Tier::getLevel))
-                .orElse(Tier.I);
-    }
-
-    public int threshold(Tier tier) {
-        return thresholds.getOrDefault(tier, tier.getRequiredBlocks());
+        Tier result = Tier.I;
+        for (Tier tier : Tier.values()) {
+            if (totalClaimBlocks >= requiredBlocks(tier)) {
+                result = tier;
+            }
+        }
+        return result;
     }
 }
